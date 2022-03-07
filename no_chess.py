@@ -2,8 +2,8 @@ import numpy as np
 import cv2 as cv
 import matplotlib.pyplot as plt
 
-imgL = cv.imread('data/not board/imageL0.png')
-imgR = cv.imread('data/not board/imageR0.png')
+imgL = cv.imread('data/not_board/imageL1.png')
+imgR = cv.imread('data/not_board/imageR1.png')
 # imgL = cv.imread('data/initial/img1-5.jpg')
 # imgR = cv.imread('data/initial/img2-5.jpg')
 # imgL = cv.imread('bottle_l.jpg')
