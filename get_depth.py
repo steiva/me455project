@@ -21,14 +21,14 @@
 # plt.imshow(img3),plt.show()
 
 import numpy as np
-import cv2
+import cv2 as cv
 from matplotlib import pyplot as plt
 # imgL = cv2.imread('cones/im2.png',0)
 # imgR = cv2.imread('cones/im6.png',0)
 # imgL = cv2.imread('bottle_l.jpg',0)
 # imgR = cv2.imread('bottle_r.jpg',0)
-imgL = cv2.imread('Lres.png',0)
-imgR = cv2.imread('Rres.png',0)
+imgL = cv.imread('rectified_1.png',0)
+imgR = cv.imread('rectified_2.png',0)
 # stereo = cv2.StereoBM_create(numDisparities=32, blockSize=5)
 # disparity = stereo.compute(imgL,imgR)
 # plt.imshow(disparity)
@@ -40,35 +40,73 @@ imgR = cv2.imread('Rres.png',0)
 
 
 
-# # Setting parameters for StereoSGBM algorithm
-# minDisparity = 0
-# numDisparities = 64
-# blockSize = 8
-# disp12MaxDiff = 1
-# uniquenessRatio = 10
-# speckleWindowSize = 10
-# speckleRange = 8
+                        # # Setting parameters for StereoSGBM algorithm
+                        # minDisparity = 0
+                        # numDisparities = 128
+                        # blockSize = 5
+                        # disp12MaxDiff = 1
+                        # uniquenessRatio = 10
+                        # speckleWindowSize = 10
+                        # speckleRange = 12
 
-# # Creating an object of StereoSGBM algorithm
-# stereo = cv2.StereoSGBM_create(minDisparity = minDisparity,
-#         numDisparities = numDisparities,
-#         blockSize = blockSize,
-#         disp12MaxDiff = disp12MaxDiff,
-#         uniquenessRatio = uniquenessRatio,
-#         speckleWindowSize = speckleWindowSize,
-#         speckleRange = speckleRange
-#     )
-
-
+                        # # Creating an object of StereoSGBM algorithm
+                        # stereo = cv2.StereoSGBM_create(minDisparity = minDisparity,
+                        #         numDisparities = numDisparities,
+                        #         blockSize = blockSize,
+                        #         disp12MaxDiff = disp12MaxDiff,
+                        #         uniquenessRatio = uniquenessRatio,
+                        #         speckleWindowSize = speckleWindowSize,
+                        #         speckleRange = speckleRange
+                        #     )
 
 
-# # Calculating disparith using the StereoSGBM algorithm
-# disp = stereo.compute(imgL, imgR).astype(np.float32)
-# disp = cv2.normalize(disp,0,255,cv2.NORM_MINMAX)
 
-# # Displaying the disparity map
-# cv2.imshow("disparity",disp)
-# cv2.waitKey(0)
+
+                        # # Calculating disparith using the StereoSGBM algorithm
+                        # disp = stereo.compute(imgL, imgR).astype(np.float32)
+                        # disp = cv2.normalize(disp,0,255,cv2.NORM_MINMAX)
+
+                        # # Displaying the disparity map
+                        # cv2.imshow("disparity",disp)
+                        # cv2.waitKey(0)
+
+block_size = 11
+min_disp = -128
+max_disp = 128
+# Maximum disparity minus minimum disparity. The value is always greater than zero.
+# In the current implementation, this parameter must be divisible by 16.
+num_disp = max_disp - min_disp
+# Margin in percentage by which the best (minimum) computed cost function value should "win" the second best value to consider the found match correct.
+# Normally, a value within the 5-15 range is good enough
+uniquenessRatio = 5
+# Maximum size of smooth disparity regions to consider their noise speckles and invalidate.
+# Set it to 0 to disable speckle filtering. Otherwise, set it somewhere in the 50-200 range.
+speckleWindowSize = 200
+# Maximum disparity variation within each connected component.
+# If you do speckle filtering, set the parameter to a positive value, it will be implicitly multiplied by 16.
+# Normally, 1 or 2 is good enough.
+speckleRange = 2
+disp12MaxDiff = 0
+
+stereo = cv.StereoSGBM_create(
+    minDisparity=min_disp,
+    numDisparities=num_disp,
+    blockSize=block_size,
+    uniquenessRatio=uniquenessRatio,
+    speckleWindowSize=speckleWindowSize,
+    speckleRange=speckleRange,
+    disp12MaxDiff=disp12MaxDiff,
+    P1=8 * 1 * block_size * block_size,
+    P2=32 * 1 * block_size * block_size,
+)
+disparity_SGBM = stereo.compute(img1_undistorted, img2_undistorted)
+
+# Normalize the values to a range from 0..255 for a grayscale image
+disparity_SGBM = cv.normalize(disparity_SGBM, disparity_SGBM, alpha=255,
+                              beta=0, norm_type=cv.NORM_MINMAX)
+disparity_SGBM = np.uint8(disparity_SGBM)
+cv.imshow("Disparity", disparity_SGBM)
+cv.imwrite("disparity_SGBM_norm.png", disparity_SGBM)
 
 # Reading the left and right images
 # def stereo_match(imgL, imgR):
@@ -114,31 +152,31 @@ imgR = cv2.imread('Rres.png',0)
 # plt.imshow(arr)
 # plt.show()
 
-import sys
-#import cv2
-#import numpy as np
-import time
+# import sys
+# #import cv2
+# #import numpy as np
+# import time
 
 
-def find_depth(right_point, left_point, frame_right, frame_left, baseline,f, alpha):
+# def find_depth(right_point, left_point, frame_right, frame_left, baseline,f, alpha):
 
-    # CONVERT FOCAL LENGTH f FROM [mm] TO [pixel]:
-    height_right, width_right, depth_right = frame_right.shape
-    height_left, width_left, depth_left = frame_left.shape
+#     # CONVERT FOCAL LENGTH f FROM [mm] TO [pixel]:
+#     height_right, width_right, depth_right = frame_right.shape
+#     height_left, width_left, depth_left = frame_left.shape
 
-    if width_right == width_left:
-        f_pixel = (width_right * 0.5) / np.tan(alpha * 0.5 * np.pi/180)
+#     if width_right == width_left:
+#         f_pixel = (width_right * 0.5) / np.tan(alpha * 0.5 * np.pi/180)
 
-    else:
-        print('Left and right camera frames do not have the same pixel width')
+#     else:
+#         print('Left and right camera frames do not have the same pixel width')
 
-    x_right = right_point[0]
-    x_left = left_point[0]
+#     x_right = right_point[0]
+#     x_left = left_point[0]
 
-    # CALCULATE THE DISPARITY:
-    disparity = x_left-x_right      #Displacement between left and right frames [pixels]
+#     # CALCULATE THE DISPARITY:
+#     disparity = x_left-x_right      #Displacement between left and right frames [pixels]
 
-    # CALCULATE DEPTH z:
-    zDepth = (baseline*f_pixel)/disparity             #Depth in [cm]
+#     # CALCULATE DEPTH z:
+#     zDepth = (baseline*f_pixel)/disparity             #Depth in [cm]
 
-    return zDepth
+#     return zDepth
