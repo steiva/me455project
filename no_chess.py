@@ -2,8 +2,16 @@ import numpy as np
 import cv2 as cv
 import matplotlib.pyplot as plt
 
-imgL = cv.imread('data/not_board/imageL1.png')
-imgR = cv.imread('data/not_board/imageR1.png')
+def clamp(img):
+    arr_min = sorted(list(set(img.flatten())))[1]
+    arr_max = np.max(img)
+    filtered_img = np.clip(img, a_min = arr_min, a_max = arr_max)
+    filtered_img = cv.normalize(filtered_img, filtered_img, alpha=255, beta=0, norm_type=cv.NORM_MINMAX)
+    filtered_img = np.uint8(filtered_img)
+    return filtered_img
+
+imgL = cv.imread('data/not_board/imageL3.png')
+imgR = cv.imread('data/not_board/imageR3.png')
 # imgL = cv.imread('data/initial/img1-5.jpg')
 # imgR = cv.imread('data/initial/img2-5.jpg')
 # imgL = cv.imread('bottle_l.jpg')
@@ -93,15 +101,26 @@ stereo = cv.StereoSGBM_create(
     P1=8 * 1 * block_size * block_size,
     P2=32 * 1 * block_size * block_size,
 )
-disparity_SGBM = stereo.compute(img1_rectified, img2_rectified)
+disparity = stereo.compute(img1_rectified, img2_rectified)
 
-# Normalize the values to a range from 0..255 for a grayscale image
-disparity_SGBM = cv.normalize(disparity_SGBM, disparity_SGBM, alpha=255,
-                              beta=0, norm_type=cv.NORM_MINMAX)
-disparity_SGBM = np.uint8(disparity_SGBM)
-#cv.imshow("Disparity", disparity_SGBM)
-cv.imwrite("disparity_SGBM_norm.png", disparity_SGBM)
+wsize=31
+max_disp = 128
+sigma = 1.5
+lmbda = 8000.0
+left_matcher = stereo
 
-plt.imshow(disparity_SGBM, cmap='plasma')
-plt.colorbar()
-plt.show()
+right_matcher = cv.ximgproc.createRightMatcher(left_matcher)
+lmbda = 8000
+sigma = 1.5
+wls_filter = cv.ximgproc.createDisparityWLSFilter(matcher_left=left_matcher)
+wls_filter.setLambda(lmbda)
+wls_filter.setSigmaColor(sigma)
+displ = left_matcher.compute(img1_rectified, img2_rectified)
+dispr = right_matcher.compute(img2_rectified, img1_rectified)
+displ = np.int16(displ)
+dispr = np.int16(dispr)
+#filtered_disparity = wls_filter.filter(disparity_map_left = displ,left_view = img1_rectified, disparity_map_right = dispr, right_view = img2_rectified) / 16.0
+filtered_disparity = wls_filter.filter(disparity_map_left = displ,left_view = img1_rectified, disparity_map_right = dispr) / 16.0
+fil_disp_right = wls_filter.filter(disparity_map_left = displ,left_view = img2_rectified, disparity_map_right = dispr) / 16.0
+cv.imwrite("filtered_right_disp.png", clamp(fil_disp_right))
+cv.imwrite("filtered_left_disp.png", clamp(filtered_disparity))
