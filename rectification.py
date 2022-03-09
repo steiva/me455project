@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 ################ FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS #############################
 
-chessboardSize = (9,6)
-frameSize = (640,480)
+chessboardSize = (8,6)
+frameSize = (1000,562)
 
 
 # termination criteria
@@ -18,7 +18,7 @@ criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objp = np.zeros((chessboardSize[0] * chessboardSize[1], 3), np.float32)
 objp[:,:2] = np.mgrid[0:chessboardSize[0],0:chessboardSize[1]].T.reshape(-1,2)
 
-size_of_chessboard_squares_mm = 20
+size_of_chessboard_squares_mm = 25.4
 objp = objp * size_of_chessboard_squares_mm
 
 # Arrays to store object points and image points from all the images.
@@ -27,8 +27,8 @@ imgpointsL = [] # 2d points in image plane.
 imgpointsR = [] # 2d points in image plane.
 
 
-imagesLeft = sorted(glob.glob('data/images/imageL*.png'))
-imagesRight = sorted(glob.glob('data/images/imageR*.png'))
+imagesLeft = sorted(glob.glob('data/stationary_board/imageL*.png'))
+imagesRight = sorted(glob.glob('data/stationary_board/imageR*.png'))
 
 # print('len imagesleft= ',len(imagesLeft))
 # print('len imagesright= ',len(imagesRight))
@@ -47,11 +47,10 @@ for imgLeft, imgRight in zip(imagesLeft, imagesRight):
     grayR = cv.cvtColor(imgR, cv.COLOR_BGR2GRAY)
 
     # Find the chess board corners
-    retL, cornersL = cv.findChessboardCorners(grayL, chessboardSize, None)
-    retR, cornersR = cv.findChessboardCorners(grayR, chessboardSize, None)
+    retL, cornersL = cv.findChessboardCornersSB(grayL, chessboardSize, None)
+    retR, cornersR = cv.findChessboardCornersSB(grayR, chessboardSize, None)
 
-    # print(retL)
-    # print(retR)
+    print(f'i = {idx}, L = {retL}, R = {retR}')
 
     # If found, add object points, image points (after refining them)
     if retL and retR == True:
@@ -88,11 +87,12 @@ cv.destroyAllWindows()
 retL, cameraMatrixL, distL, rvecsL, tvecsL = cv.calibrateCamera(objpoints, imgpointsL, frameSize, None, None)
 heightL, widthL, channelsL = imgL.shape
 newCameraMatrixL, roi_L = cv.getOptimalNewCameraMatrix(cameraMatrixL, distL, (widthL, heightL), 1, (widthL, heightL))
+newCameraMatrixL = cameraMatrixL
 
 retR, cameraMatrixR, distR, rvecsR, tvecsR = cv.calibrateCamera(objpoints, imgpointsR, frameSize, None, None)
 heightR, widthR, channelsR = imgR.shape
 newCameraMatrixR, roi_R = cv.getOptimalNewCameraMatrix(cameraMatrixR, distR, (widthR, heightR), 1, (widthR, heightR))
-
+newCameraMatrixR = cameraMatrixR
 
 
 ########## Stereo Vision Calibration #############################################

@@ -14,8 +14,8 @@ stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
 # cap_right = cv2.VideoCapture(2, cv2.CAP_DSHOW)                    
 # cap_left =  cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
-frame_left = cv2.imread('data/images/imageL1.png')
-frame_right = cv2.imread('data/images/imageR1.png')
+frame_left = cv2.imread('data/stationary_board/imageL1.png')
+frame_right = cv2.imread('data/stationary_board/imageR1.png')
 
 #while(cap_right.isOpened() and cap_left.isOpened()):
 

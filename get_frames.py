@@ -8,8 +8,8 @@ import cv2
 
 import imutils
 
-url = "http://10.19.58.216:8080/shot.jpg"
-url2 = "http://10.18.178.59:8080/shot.jpg"
+url = "http://10.19.203.50:8080/shot.jpg"
+url2 = "http://10.18.199.231:8080/shot.jpg"
 
 num = 0
 
@@ -30,8 +30,8 @@ while True:
     if k == 27:
         break
     elif k == ord('s'): # wait for 's' key to save and exit
-        cv2.imwrite('data/not_board/image_newL' + str(num) + '.png', img)
-        cv2.imwrite('data/not_board/image_newR' + str(num) + '.png', img2)
+        cv2.imwrite('data/stationary_not_board/imageL' + str(num) + '.png', img)
+        cv2.imwrite('data/stationary_not_board/imageR' + str(num) + '.png', img2)
         print("images saved!")
         num += 1
     Hori = np.concatenate((img, img2), axis = 1)
