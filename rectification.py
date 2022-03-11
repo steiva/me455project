@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 ################ FIND CHESSBOARD CORNERS - OBJECT POINTS AND IMAGE POINTS #############################
 
-chessboardSize = (8,6)
+chessboardSize = (8 ,5)
 frameSize = (1000,562)
 
 
@@ -87,12 +87,12 @@ cv.destroyAllWindows()
 retL, cameraMatrixL, distL, rvecsL, tvecsL = cv.calibrateCamera(objpoints, imgpointsL, frameSize, None, None)
 heightL, widthL, channelsL = imgL.shape
 newCameraMatrixL, roi_L = cv.getOptimalNewCameraMatrix(cameraMatrixL, distL, (widthL, heightL), 1, (widthL, heightL))
-newCameraMatrixL = cameraMatrixL
+#newCameraMatrixL = cameraMatrixL
 
 retR, cameraMatrixR, distR, rvecsR, tvecsR = cv.calibrateCamera(objpoints, imgpointsR, frameSize, None, None)
 heightR, widthR, channelsR = imgR.shape
 newCameraMatrixR, roi_R = cv.getOptimalNewCameraMatrix(cameraMatrixR, distR, (widthR, heightR), 1, (widthR, heightR))
-newCameraMatrixR = cameraMatrixR
+#newCameraMatrixR = cameraMatrixR
 
 
 ########## Stereo Vision Calibration #############################################
