@@ -1,7 +1,8 @@
 import numpy as np
 import cv2 as cv
 
-#-----------------------------General Functions---------------------------------
+# -----------------------------General Functions---------------------------------
+
 
 def clamp(img):
     '''
@@ -19,7 +20,8 @@ def clamp(img):
     filtered_img = np.uint8(filtered_img)
     return filtered_img
 
-def disp_filtering(imgL_rect, imgR_rect, left_matcher, lmbda = 8000, sigma = 1.5):
+
+def disp_filtering(imgL_rect, imgR_rect, left_matcher, lmbda=8000, sigma=1.5):
     '''
     Function filters the raw disparity map, giving a better representation.
     :param imgL_rect: left rectified image.
@@ -35,16 +37,20 @@ def disp_filtering(imgL_rect, imgR_rect, left_matcher, lmbda = 8000, sigma = 1.5
     :returns: filtered left and right disparity maps.
     '''
     right_matcher = cv.ximgproc.createRightMatcher(left_matcher)
-    wls_filter = cv.ximgproc.createDisparityWLSFilter(matcher_left=left_matcher)
+    wls_filter = cv.ximgproc.createDisparityWLSFilter(
+        matcher_left=left_matcher)
     wls_filter.setLambda(lmbda)
     wls_filter.setSigmaColor(sigma)
     displ = left_matcher.compute(imgL_rect, imgR_rect)
     dispr = right_matcher.compute(imgR_rect, imgL_rect)
-    fil_disp_left = wls_filter.filter(disparity_map_left = displ,left_view = imgL_rect, disparity_map_right = dispr)
-    fil_disp_right = wls_filter.filter(disparity_map_left = displ,left_view = imgR_rect, disparity_map_right = dispr)
+    fil_disp_left = wls_filter.filter(
+        disparity_map_left=displ, left_view=imgL_rect, disparity_map_right=dispr)
+    fil_disp_right = wls_filter.filter(
+        disparity_map_left=displ, left_view=imgR_rect, disparity_map_right=dispr)
     return fil_disp_left, fil_disp_right
 
-#------------------Functions for the frame by frame method----------------------
+# ------------------Functions for the frame by frame method----------------------
+
 
 def find_matches(img1, img2):
     '''
@@ -104,9 +110,10 @@ def rectify_images(img1, img2, pts1, pts2):
     img2_rectified = cv.warpPerspective(img2, H2, (w2, h2))
     return img1_rectified, img2_rectified
 
-#-------------Function for the precalculated fundamental matrix-----------------------
+# -------------Function for the precalculated fundamental matrix-----------------------
 
-def rect_using_fmatrix(imgL, imgR, path = 'stereoMap.xml'):
+
+def rect_using_fmatrix(imgL, imgR, path='stereoMap.xml'):
     '''
     Function rectifies images using a predefined fundamental matrix,
     recorded in stereoMap.xml, using the rectification.py script.
@@ -122,7 +129,9 @@ def rect_using_fmatrix(imgL, imgR, path = 'stereoMap.xml'):
     stereoMapL_y = cv_file.getNode('stereoMapL_y').mat()
     stereoMapR_x = cv_file.getNode('stereoMapR_x').mat()
     stereoMapR_y = cv_file.getNode('stereoMapR_y').mat()
-    imgL_rect = cv.remap(imgL, stereoMapL_x, stereoMapL_y, cv.INTER_LANCZOS4, cv.BORDER_CONSTANT, 0)
-    imgR_rect = cv.remap(imgR, stereoMapR_x, stereoMapR_y, cv.INTER_LANCZOS4, cv.BORDER_CONSTANT, 0)
+    imgL_rect = cv.remap(imgL, stereoMapL_x, stereoMapL_y,
+                         cv.INTER_LANCZOS4, cv.BORDER_CONSTANT, 0)
+    imgR_rect = cv.remap(imgR, stereoMapR_x, stereoMapR_y,
+                         cv.INTER_LANCZOS4, cv.BORDER_CONSTANT, 0)
 
     return imgL_rect, imgR_rect
