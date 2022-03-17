@@ -25,3 +25,5 @@ Useful links that were used to complete this project.
 * https://www.researchgate.net/figure/Pin-hole-camera-model-terminology-The-optical-center-pinhole-is-placed-at-the-origin_fig10_317498100
 * https://docs.opencv.org/3.4/dd/d53/tutorial_py_depthmap.html
 * https://learnopencv.com/depth-perception-using-stereo-camera-python-c/
+
+![Disparity real-time gif](1_video.gif)
