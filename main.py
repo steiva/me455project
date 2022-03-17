@@ -6,8 +6,8 @@ import dependencies as deps
 # This file is an alternative for the sadbox.ipynb, for the more rigid in mind.
 
 # importing images
-imgL = cv.imread('data/not_board/imageL3.png')
-imgR = cv.imread('data/not_board/imageR3.png')
+imgL = cv.imread('data/stationary_not_board/imageL3.png')
+imgR = cv.imread('data/stationary_not_board/imageR3.png')
 # imgL = cv.imread('data/initial/img1-5.jpg')
 # imgR = cv.imread('data/initial/img2-5.jpg')
 # imgL = cv.imread('bottle_l.jpg')
