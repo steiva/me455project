@@ -17,6 +17,7 @@ Project code structure:
 * data/ - folders with images we used to find the disparity map on, as well as do the chessboard rectification.
 
 Useful links that were used to complete this project.
+* [Our website](https://baboolasiquala.github.io/Depth_Perception/CSE455%20Project)
 * https://docs.opencv.org/3.4/dc/dc3/tutorial_py_matcher.html
 * https://github.com/aryanvij02/StereoVision/tree/master/main_scripts
 * https://www.andreasjakl.com/how-to-apply-stereo-matching-to-generate-depth-maps-part-3/
