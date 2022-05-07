@@ -1,6 +1,6 @@
 ## Creating a disparity map using two android phones and a rubber band. 
 
-This is a final project for the University of Washington CSE ME455 course, "Computer Vision". Participants:
+This is a final project for the University of Washington CSE 455 course, "Computer Vision". Participants:
 Shaheryar Hasnain, Ivan Stepanov, Digjay Das.
 
 The topic of this project is Stereo Depth perception using a mobile camera(s). Two android phones with similar
